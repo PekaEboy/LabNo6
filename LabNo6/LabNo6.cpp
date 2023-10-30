@@ -2,11 +2,77 @@
 //
 
 #include <iostream>
+#include <locale>
+#include <Windows.h>
 
 using namespace std;
+float S(float x1, float y1, float x2, float y2, float x3, float y3) {
+    float a = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    float b = sqrt((x3 - x1) * (x3 - x1) + (y3 - y1) * (y3 - y1));
+    float c = sqrt((x2 - x3) * (x2 - x3) + (y2 - y3) * (y2 - y3));
+    float p = (a + b + c) / 2;
+    return (float)sqrt(abs(p) * abs(p - a) * abs(p - b) * abs(p - c));
+}
+
 int main()
 {
-    cout << "Hello World!\n";
+    setlocale(LC_ALL, "ru");
+    float A[100][2];
+    int n;
+    cout << "Введите количество точек: ";
+    cin >> n;
+    if (n < 3) {
+        cout << "Нельзя построить хотя бы одну треугольник";
+    }
+    else {
+        for (int i = 0; i < n; i++) {
+            cout << "Введите координат точек: ";
+            for (int j = 0; j < 2; j++) {
+                cin >> A[i][j];
+            }
+        }
+        float St = 0.0;
+        float Sm = 0.0;
+        float M[3][2];
+        for (int l = 0; l < 3; l++) {
+            M[l][0] = A[l][0];
+            M[l][1] = A[l][1];
+        }
+        for (int i = 0; i < n - 2; i++) {
+            for (int j = i+1; j < n - 1; j++) {
+                for (int k = j+1; k < n; k++) {
+                    St = S(A[i][0], A[i][1], A[j][0], A[j][1], A[k][0], A[k][1]);
+                    if (St > Sm) { 
+                        Sm = St;
+                        for (int l = 0; l < 3; l++) {
+                            switch (l) {
+                                case 0:
+                                    M[l][0] = A[i][0];
+                                    M[l][1] = A[i][1];
+                                    break;
+                                case 1:
+                                    M[l][0] = A[j][0];
+                                    M[l][1] = A[j][1];
+                                    break;
+                                case 2:
+                                    M[l][0] = A[k][0];
+                                    M[l][1] = A[k][1];
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        cout << "Максимальная площадь треугольника: " << Sm << endl;
+        cout << "Координаты точек данного треугольника: " << endl;
+        for (int i = 0; i < 3; i++) {
+            cout << M[i][0] << " " << M[i][1] << endl;
+        }
+    }
+    
+    system("pause");
+    return 0;
 }
 
 // Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
